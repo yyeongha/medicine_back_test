@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analyze</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #FFF9E6;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+        }
+        .container h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .circles {
+            position: relative;
+            width: 100px;
+            height: 200px;
+            margin: 0 auto;
+        }
+        .circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .circle:nth-child(1) {
+            top: 10%;
+            background-color: #2196F3;
+        }
+        .circle:nth-child(2) {
+            top: 30%;
+            background-color: #FF5722;
+        }
+        .circle:nth-child(3) {
+            top: 50%;
+            background-color: #FFEB3B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>정확한 분석을 위해 조금만 기다려주세요!</h1>
+        <div class="circles">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+    </div>
+</body>
+</html>
