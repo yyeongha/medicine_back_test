@@ -9,7 +9,6 @@ class Drug(models.Model):
     drug_name = models.CharField(max_length=200)
     drug_name_en = models.CharField(max_length=200)
     drug_material = models.CharField(max_length=50)
-    drug_material_code = models.CharField(max_length=200)
     drug_company = models.CharField(max_length=200)
     drug_shape = models.CharField(max_length=20)
     drug_color = models.CharField(max_length=100)
@@ -21,31 +20,33 @@ class Drug(models.Model):
     drug_price_unit = models.CharField(max_length=20)
     drug_price = models.IntegerField()
     drug_illness = models.CharField(max_length=20)
-    drug_img_key = models.CharField(max_length=400)
+    drug_img_path = models.CharField(max_length=400)
 
     class Meta:
         """ Meta class """
         db_table = 'drug'
-        managed = True # FIXME: Change this to False if you want to use the existing table
+        managed = True 
 
     def __str__(self):
         return self.drug_name
 
 
-class DrugImage(models.Model):
-    """ Drug Image Model Definition """
-    drug_image_id = models.AutoField(primary_key=True)
-    drug_no = models.ForeignKey(Drug, on_delete=models.CASCADE, db_column='drug_no')
-    drug_imgkey = models.CharField(max_length=200)
+# db에서 drug_images 테이블 사라짐..
 
-    class Meta:
-        """ Meta class """
-        db_table = 'drug_images'
-        verbose_name_plural = 'Drug Images'
-        managed = True # FIXME: Change this to False if you want to use the existing table
+# class DrugImage(models.Model):
+#     """ Drug Image Model Definition """
+#     drug_image_id = models.AutoField(primary_key=True)
+#     drug_no = models.ForeignKey(Drug, on_delete=models.CASCADE, db_column='drug_no')
+#     drug_imgkey = models.CharField(max_length=200)
 
-    def __str__(self):
-        return f"{self.drug_no.drug_name} - Image"
+#     class Meta:
+#         """ Meta class """
+#         db_table = 'drug_images'
+#         verbose_name_plural = 'Drug Images'
+#         managed = True # FIXME: Change this to False if you want to use the existing table
+
+#     def __str__(self):
+#         return f"{self.drug_no.drug_name} - Image"
 
 
 
