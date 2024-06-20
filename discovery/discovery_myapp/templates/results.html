@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +16,7 @@
     <div class="bg-white p-6 rounded-lg shadow-lg w-80">
         <h1 class="text-center text-xl font-bold mb-4">4개의 알약이 발견됐어요!</h1>
         <div class="flex justify-end mb-4">
-            <a href="{% url 'delete_pills' %}" class="text-gray-500 text-sm">삭제하기</a>
+            <button class="text-gray-500 text-sm" onclick="submitDeletions()">삭제하기</button>
         </div>
         <div class="grid grid-cols-2 gap-4 mb-4">
             {% for drug in drugs %}
@@ -36,6 +36,16 @@
         </div>
     </div>
     <script>
+        let deletedPills = [];
+
+        function deletePill(id) {
+            const pillElement = document.getElementById('pill-' + id);
+            if (pillElement) {
+                pillElement.remove();
+                deletedPills.push(id);
+            }
+        }
+
         function goToAnalyzeList() {
             window.location.href = "{% url 'aianalyzelist' %}";
         }
