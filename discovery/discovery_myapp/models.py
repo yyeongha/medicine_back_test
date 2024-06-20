@@ -51,8 +51,6 @@ class Drug(models.Model):
 
 
 
-
-
 class Search(models.Model):
     """ Search Model Definition """
     search_id = models.AutoField(primary_key=True)

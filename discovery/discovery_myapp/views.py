@@ -23,47 +23,61 @@ def analyze(request):
 @csrf_exempt
 def analyze_results(request):
     if request.method == 'GET':
-        drug_name = request.GET.get('drug_name')
+        drug_names = request.GET.getlist('drug_name')
 
-        if not drug_name:
+        if not drug_names:
             return JsonResponse({'error': 'Missing drug_name'}, status=400)
 
-        drug = Drug.objects.filter(drug_name=drug_name).first()
-        if drug:
-            response_data = {
-                'status_code': 200,
-                'drug_img_path': drug.drug_img_path,
-                'drug_name': drug.drug_name,
-                'drug_illness': drug.drug_illness,
-            }
-            return JsonResponse(response_data, status=200)
+        drugs = Drug.objects.filter(drug_name__in=drug_names)
+        if drugs.exists():
+            drug_list = []
+            for drug in drugs:
+                drug_list.append({
+                    'status_code': 200,
+                    'drug_img_path': drug.drug_img_path,
+                    'drug_name': drug.drug_name,
+                    'drug_illness': drug.drug_illness,
+                    'drug_price': drug.drug_price
+                })
+            return JsonResponse(drug_list, safe=False)
         else:
-            return JsonResponse({'error': 'Drug not found'}, status=404)
-
-    # GET 요청 시 results.html을 렌더링합니다.
-    drugs = Drug.objects.all()
-    return render(request, 'results.html', {'drugs': drugs})   
-
+            return JsonResponse({'error': 'No drugs found'}, status=404)
+    else:
+        return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
+    
+@csrf_exempt
 def aianalyzelist(request):
     if request.method == 'GET':
-        drug_name = request.GET.get('drug_name')
-        drug_img_path = request.GET.get('drug_img_path')
-        drug_illness = request.GET.get('drug_illness')
+        drug_names = request.GET.getlist('drug_name')
+        drug_img_paths = request.GET.getlist('drug_img_path')
+        drug_illnesses = request.GET.getlist('drug_illness')
 
-        if not drug_name or not drug_img_path or not drug_illness:
+        if not (drug_names and drug_img_paths and drug_illnesses):
             return JsonResponse({'error': 'Missing required parameters'}, status=400)
 
-        drug = Drug.objects.filter(drug_name=drug_name, drug_img_path=drug_img_path, drug_illness=drug_illness).first()
-        if drug:
-            response_data = {
-                'status_code': 200,
-                'drug_illness': drug.drug_illness,
-                'drug_name': drug.drug_name,
-                'drug_price': drug.drug_price,
-                'drug_img_path': drug.drug_img_path
-            }
-            return JsonResponse(response_data, status=200)
-        else:
-            return JsonResponse({'error': 'Drug not found'}, status=404)
+        if len(drug_names) != len(drug_img_paths) or len(drug_names) != len(drug_illnesses):
+            return JsonResponse({'error': 'Parameter lists are not of the same length'}, status=400)
+
+        drugs = []
+        for drug_name, drug_img_path, drug_illness in zip(drug_names, drug_img_paths, drug_illnesses):
+            drug = Drug.objects.filter(drug_name=drug_name, drug_img_path=drug_img_path, drug_illness=drug_illness).first()
+            if drug:
+                drugs.append({
+                    'status_code': 200,
+                    'drug_illness': drug.drug_illness,
+                    'drug_name': drug.drug_name,
+                    'drug_price': drug.drug_price,
+                    'drug_img_path': drug.drug_img_path
+                })
+            else:
+                drugs.append({
+                    'status_code': 404,
+                    'error': 'Drug not found',
+                    'drug_name': drug_name,
+                    'drug_img_path': drug_img_path,
+                    'drug_illness': drug_illness
+                })
+
+        return JsonResponse(drugs, safe=False)
     else:
         return JsonResponse({"error": "Invalid HTTP method"}, status=405)
