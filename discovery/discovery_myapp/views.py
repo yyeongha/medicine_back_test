@@ -12,23 +12,23 @@ logging.basicConfig(level=logging.INFO)
 
 
 @csrf_exempt  # CSRF 토큰 검사를 비활성화
-def analyze(request):
+def analyze(request): 
     if request.method == 'POST':
         return JsonResponse({'status': 'waiting'}, status=200)
     elif request.method == 'GET':
-        return render(request, 'analyze.html')  # GET 요청에 대해 템플릿 렌더링
+        return render(request, 'analyze.html')  # analyze.html 템플릿을 렌더링
     else:
         return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @csrf_exempt
 def analyze_results(request):
-    if request.method == 'GET':
-        drug_names = request.GET.getlist('drug_name')
+    if request.method == 'GET': # GET 요청을 처리
+        drug_names = request.GET.getlist('drug_name') # drug_name 파라미터를 리스트로 가져옴
 
-        if not drug_names:
-            return JsonResponse({'error': 'Missing drug_name'}, status=400)
+        if not drug_names: # drug_name 파라미터가 없는 경우
+            return JsonResponse({'error': 'Missing drug_name'}, status=400) # 400 에러 반환
 
-        drugs = Drug.objects.filter(drug_name__in=drug_names)
+        drugs = Drug.objects.filter(drug_name__in=drug_names) # drug_name 파라미터에 해당하는 Drug 객체들을 가져옴
         if drugs.exists():
             drug_list = []
             for drug in drugs:
@@ -47,20 +47,20 @@ def analyze_results(request):
     
 @csrf_exempt
 def aianalyzelist(request):
-    if request.method == 'GET':
-        drug_names = request.GET.getlist('drug_name')
-        drug_img_paths = request.GET.getlist('drug_img_path')
-        drug_illnesses = request.GET.getlist('drug_illness')
+    if request.method == 'GET': # GET 요청을 처리
+        drug_names = request.GET.getlist('drug_name') # drug_name 파라미터를 리스트로 가져옴
+        drug_img_paths = request.GET.getlist('drug_img_path') # drug_img_path 파라미터를 리스트로 가져옴
+        drug_illnesses = request.GET.getlist('drug_illness')  # drug_illness 파라미터를 리스트로 가져옴
 
-        if not (drug_names and drug_img_paths and drug_illnesses):
-            return JsonResponse({'error': 'Missing required parameters'}, status=400)
+        if not (drug_names and drug_img_paths and drug_illnesses): # drug_name, drug_img_path, drug_illness 파라미터 중 하나라도 없는 경우
+            return JsonResponse({'error': 'Missing required parameters'}, status=400) # 400 에러 반환
 
-        if len(drug_names) != len(drug_img_paths) or len(drug_names) != len(drug_illnesses):
-            return JsonResponse({'error': 'Parameter lists are not of the same length'}, status=400)
-
-        drugs = []
-        for drug_name, drug_img_path, drug_illness in zip(drug_names, drug_img_paths, drug_illnesses):
-            drug = Drug.objects.filter(drug_name=drug_name, drug_img_path=drug_img_path, drug_illness=drug_illness).first()
+        if len(drug_names) != len(drug_img_paths) or len(drug_names) != len(drug_illnesses): # drug_name, drug_img_path, drug_illness 리스트의 길이가 다른 경우
+            return JsonResponse({'error': 'Parameter lists are not of the same length'}, status=400) # 400 에러 반환
+ 
+        drugs = [] 
+        for drug_name, drug_img_path, drug_illness in zip(drug_names, drug_img_paths, drug_illnesses): # drug_name, drug_img_path, drug_illness 리스트를 동시에 순회
+            drug = Drug.objects.filter(drug_name=drug_name, drug_img_path=drug_img_path, drug_illness=drug_illness).first() # drug_name, drug_img_path, drug_illness에 해당하는 Drug 객체를 가져옴
             if drug:
                 drugs.append({
                     'status_code': 200,
